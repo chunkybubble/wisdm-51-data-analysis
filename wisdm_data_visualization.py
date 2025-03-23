@@ -8,7 +8,7 @@ import re
 
 # Set the style for our plots
 plt.style.use('ggplot')
-sns.set(font_scale=1.2)
+sns.set_theme(font_scale=1.2)
 
 def read_arff_file(file_path):
     """
@@ -192,7 +192,8 @@ def visualize_arff_data(df, output_dir='visualizations/arff', show_plots=False):
         plt.xlabel(col)
         plt.ylabel('Frequency')
         plt.tight_layout()
-        plt.savefig(f'{output_dir}/{col}_histogram.png')
+        safe_col = col.replace('"', '')
+        plt.savefig(f'{output_dir}/{safe_col}_histogram.png')
         if show_plots:
             plt.show()
         else:
@@ -300,7 +301,7 @@ def visualize_arff_data(df, output_dir='visualizations/arff', show_plots=False):
 # Main execution
 if __name__ == "__main__":
     # Specify the path to your data
-    data_dir = "~/Downloads/wisdm-dataset"
+    data_dir = "wisdm-dataset"
     data_dir = os.path.expanduser(data_dir)  # Expand the ~ to the home directory
     
     print("Starting WISDM dataset analysis...")
