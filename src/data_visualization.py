@@ -3,7 +3,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-def visualize_arff_data(df, output_dir='visualizations/arff', show_plots=False):
+current_dir = os.path.dirname(__file__)
+graph_dir = os.path.abspath(os.path.join(current_dir, '..', 'visualizations/arff'))
+
+def visualize_arff_data(df, output_dir=graph_dir, show_plots=False):
     """
     Create visualizations for ARFF data format
 
@@ -128,7 +131,6 @@ def visualize_arff_data(df, output_dir='visualizations/arff', show_plots=False):
         sample_df = df[selected_cols + [activity_col]].sample(min(3000, len(df)))
 
         # Create pair plot
-        plt.figure(figsize=(15, 15))
         g = sns.pairplot(sample_df, hue=activity_col, plot_kws={'alpha': 0.5}, diag_kind='kde')
         g.fig.suptitle('Pairwise Relationships between Features', y=1.02)
         plt.tight_layout()
