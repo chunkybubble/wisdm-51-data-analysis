@@ -34,7 +34,7 @@ def preprocess_data(df, fs=20, window_duration=5, overlap=0.5, missing_threshold
     def low_pass_filter(data, cutoff=3, fs=fs, order=2):
         nyq = 0.5 * fs
         normal_cutoff = cutoff / nyq
-        b, a = butter(order, normal_cutoff, btype='low', analog=False)
+        b, a = butter(order, normal_cutoff, btype='low', analog=False, output='ba')
         return filtfilt(b, a, data)
 
     sensor_cols = [col for col in numeric_cols if any(axis in col.lower() for axis in ['x', 'y', 'z'])]
@@ -58,6 +58,7 @@ def preprocess_data(df, fs=20, window_duration=5, overlap=0.5, missing_threshold
     step_size = int(window_size * (1 - overlap))
     segments = []
 
+    # Segment by index
     for start in range(0, len(df_processed) - window_size + 1, step_size):
         segment = df_processed.iloc[start: start + window_size]
         if segment.isna().mean().max() < missing_threshold:
