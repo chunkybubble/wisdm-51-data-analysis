@@ -13,14 +13,27 @@ def main():
     df = load_wisdm_data(data_dir, file_limit=20)
 
     if df is not None:
+        # Print summary of loaded data
+        print("\n--- Loaded Dataset Summary ---")
+        print(f"Total number of records: {len(df)}")
+        print(f"Unique subjects: {df['subject_id'].nunique()}")
+        print(f"Device types: {df['device'].unique()}")
+        print(f"Sensor types: {df['sensor_type'].unique()}")
+
         # Preprocess the data
         segments, processed_df = preprocess_data(df, fs=20, window_duration=5, overlap=0.5)
+        
+        # Print preprocessing details
+        print("\n--- Preprocessing Summary ---")
+        print(f"Original DataFrame shape: {df.shape}")
         print(f"Processed DataFrame shape: {processed_df.shape}")
         print(f"Number of segments created: {len(segments)}")
+        print(f"Window duration: 5 seconds")
+        print(f"Overlap: 50%")
 
         # Visualize the processed ARFF data
         visualize_arff_data(processed_df, show_plots=True)
-        print("Data visualization complete. Check the 'visualizations/arff' folder for results.")
+        print("\nData visualization complete. Check the 'visualizations/arff' folder for results.")
     else:
         print("Failed to load any data. Please check the data directory and file format.")
 

@@ -74,6 +74,60 @@ def read_arff_file(file_path):
         print(f"Error reading ARFF file {file_path}: {e}")
         return None
 
+# def load_wisdm_data(data_dir, file_limit=None):
+#     """
+#     Load and process WISDM dataset files.
+    
+#     Parameters:
+#     data_dir (str): Directory containing the WISDM dataset files
+#     file_limit (int, optional): Maximum number of files to load (for testing)
+    
+#     Returns:
+#     pandas.DataFrame: Processed dataset
+#     """
+#     print(f"Looking for data in: {data_dir}")
+    
+#     # Check if the directory exists
+#     if not os.path.exists(data_dir):
+#         raise FileNotFoundError(f"Directory not found: {data_dir}")
+    
+#     # Look for ARFF files
+#     arff_files = []
+#     arff_phone_accel = glob.glob(os.path.join(data_dir, "arff_files/phone/accel/*.arff"))
+#     arff_phone_gyro = glob.glob(os.path.join(data_dir, "arff_files/phone/gyro/*.arff"))
+#     arff_watch_accel = glob.glob(os.path.join(data_dir, "arff_files/watch/accel/*.arff"))
+#     arff_watch_gyro = glob.glob(os.path.join(data_dir, "arff_files/watch/gyro/*.arff"))
+    
+#     arff_files = arff_phone_accel + arff_phone_gyro + arff_watch_accel + arff_watch_gyro
+#     print(f"Found {len(arff_files)} ARFF files (.arff)")
+    
+#     # Limit files for testing if requested
+#     if file_limit:
+#         arff_files = arff_files[:file_limit]
+#         print(f"Loading {file_limit} ARFF files for testing")
+    
+#     # Load ARFF data
+#     arff_data = []
+#     if arff_files:
+#         print("Loading ARFF files (this might take a while)...")
+#         for i, file in enumerate(arff_files):
+#             print(f"Processing ARFF file {i+1}/{len(arff_files)}: {os.path.basename(file)}")
+#             df = read_arff_file(file)
+#             if df is not None:
+#                 arff_data.append(df)
+        
+#         if arff_data:
+#             print(f"Successfully loaded {len(arff_data)} ARFF files")
+#             arff_df = pd.concat(arff_data, ignore_index=True)
+#             print(f"Combined ARFF data shape: {arff_df.shape}")
+#             return arff_df
+#         else:
+#             print("Failed to load any ARFF files")
+#             return None
+#     else:
+#         print("No ARFF files found")
+#         return None
+
 def load_wisdm_data(data_dir, file_limit=None):
     """
     Load and process WISDM dataset files.
@@ -119,7 +173,30 @@ def load_wisdm_data(data_dir, file_limit=None):
         if arff_data:
             print(f"Successfully loaded {len(arff_data)} ARFF files")
             arff_df = pd.concat(arff_data, ignore_index=True)
-            print(f"Combined ARFF data shape: {arff_df.shape}")
+            
+            # Detailed Data Printing
+            print("\n--- DataFrame Overview ---")
+            print(f"Total rows: {len(arff_df)}")
+            print(f"Total columns: {len(arff_df.columns)}")
+            
+            print("\n--- Column Names ---")
+            print(arff_df.columns.tolist())
+            
+            print("\n--- Data Types ---")
+            print(arff_df.dtypes)
+            
+            print("\n--- First 10 Rows ---")
+            print(arff_df.head(10))
+            
+            print("\n--- Statistical Summary of Numeric Columns ---")
+            print(arff_df.describe())
+            
+            print("\n--- Unique Values in Categorical Columns ---")
+            for col in ['subject_id', 'sensor_type', 'device']:
+                if col in arff_df.columns:
+                    print(f"\nUnique {col}:")
+                    print(arff_df[col].unique())
+            
             return arff_df
         else:
             print("Failed to load any ARFF files")
