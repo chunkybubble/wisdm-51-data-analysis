@@ -1,0 +1,3 @@
+Best Model: Random Forest
+Accuracy: 0.8529
+Parameters: {'classifier__max_depth': None, 'classifier__n_estimators': 100}
