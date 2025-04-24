@@ -69,6 +69,13 @@ def load_data(feature_path, label_path, metadata_path=None):
 
 
 def evaluate(X, y, cv, cv_name):
+    """
+    Perform grid search (inner CV) then cross-validate best estimators.
+    - X, y: data
+    - cv: cross-validation splitter or generator
+    - cv_name: label for printing
+    Prints mean ± std for each metric and model.
+    """
     print(f"\n--- {cv_name} ---")
     for name, Model in models.items():
         pipe = Pipeline([('scaler', StandardScaler()), ('clf', Model())])
