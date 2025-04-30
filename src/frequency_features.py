@@ -140,6 +140,8 @@ def extract_features(segments):
     X = pd.DataFrame(all_feats)
     if 'activity' in X:
         y = X['activity']
+        meta = pd.DataFrame(all_feats)[['subject_id', 'activity', 'device', 'sensor_type']]
+        meta.to_csv(os.path.join(out_dir, 'freq_metadata.csv'), index=False)
         X = X.drop(columns=['activity','subject_id','device','sensor_type'])
     else:
         y = pd.Series(name='activity')

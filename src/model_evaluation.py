@@ -68,7 +68,7 @@ def load_data(feature_path, label_path, metadata_path=None):
     return X, y, subject_groups, episode_groups
 
 
-def evaluate(X, y, cv, cv_name):
+def evaluate(X, y, cv, cv_name, groups=None):
     """
     Perform grid search (inner CV) then cross-validate best estimators.
     - X, y: data
@@ -87,7 +87,7 @@ def evaluate(X, y, cv, cv_name):
         )
         grid.fit(X, y)
         best = grid.best_estimator_
-        cv_res = cross_validate(best, X, y, cv=cv, scoring=scoring, n_jobs=-1)
+        cv_res = cross_validate(best, X, y, cv=cv, groups=groups, scoring=scoring, n_jobs=-1)
         print(f"\n{name}:")
         for metric in scoring.keys():
             scores = cv_res[f'test_{metric}']
@@ -102,24 +102,24 @@ def main():
     time_feat = os.path.join(feat_dir, 'time_selected_features.csv')
     freq_feat = os.path.join(feat_dir, 'frequency_selected_features.csv')
     labels = os.path.join(feat_dir, 'activity_labels.csv')
-    time_meta = os.path.join(feat_dir, 'time_all_features.csv')
-    freq_meta = os.path.join(feat_dir, 'frequency_all_features.csv')
+    time_meta = os.path.join(feat_dir, 'time_metadata.csv')
+    freq_meta = os.path.join(feat_dir, 'freq_metadata.csv')
 
     # Time-domain evaluation
     X_time, y_time, sub_time, epi_time = load_data(time_feat, labels, time_meta)
     evaluate(X_time, y_time, StratifiedKFold(n_splits=10, shuffle=True, random_state=42), 'Time 10-Fold CV')
     if sub_time is not None:
-        evaluate(X_time, y_time, GroupKFold(n_splits=sub_time.nunique()).split(X_time, y_time, sub_time), 'Time LOSO CV')
+        evaluate(X_time, y_time, GroupKFold(n_splits=sub_time.nunique()), 'Time LOSO CV', groups=sub_time)
     if epi_time is not None:
-        evaluate(X_time, y_time, LeaveOneGroupOut().split(X_time, y_time, epi_time), 'Time LOEO CV')
+        evaluate(X_time, y_time, LeaveOneGroupOut(), 'Time LOEO CV', groups=epi_time)
 
     # Frequency-domain evaluation
     X_freq, y_freq, sub_freq, epi_freq = load_data(freq_feat, labels, freq_meta)
     evaluate(X_freq, y_freq, StratifiedKFold(n_splits=10, shuffle=True, random_state=42), 'Freq 10-Fold CV')
     if sub_freq is not None:
-        evaluate(X_freq, y_freq, GroupKFold(n_splits=sub_freq.nunique()).split(X_freq, y_freq, sub_freq), 'Freq LOSO CV')
+        evaluate(X_freq, y_freq, GroupKFold(n_splits=sub_freq.nunique()), 'Freq LOSO CV', groups=sub_freq)
     if epi_freq is not None:
-        evaluate(X_freq, y_freq, LeaveOneGroupOut().split(X_freq, y_freq, epi_freq), 'Freq LOEO CV')
+        evaluate(X_freq, y_freq, LeaveOneGroupOut(), 'Freq LOEO CV', groups=epi_freq)
 
 if __name__ == '__main__':
     main()

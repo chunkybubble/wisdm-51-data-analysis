@@ -198,6 +198,8 @@ def extract_features(segments):
     # Separate label column from features
     if 'activity' in X.columns:
         y = X['activity']
+        meta = pd.DataFrame(feat_dicts)[['subject_id', 'activity', 'device', 'sensor_type']]
+        meta.to_csv(os.path.join(output_dir, 'time_metadata.csv'), index=False)
         X = X.drop(columns=['activity', 'subject_id', 'device', 'sensor_type'])
     else:
         y = pd.Series(labels, name='activity')
